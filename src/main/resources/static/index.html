@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NexaBank Pro – Login</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#060610;--s1:#0f0f1e;--s2:#181830;--acc:#6c63ff;--teal:#00e5c8;--text:#eeeeff;--mut:#6666aa;--red:#ff6b6b;--grn:#4dffa3}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.bg{position:fixed;inset:0;pointer-events:none;z-index:0}
+.orb{position:absolute;border-radius:50%;filter:blur(100px);opacity:.12;animation:pulse 10s ease-in-out infinite alternate}
+.o1{width:600px;height:600px;background:#6c63ff;top:-200px;left:-200px}
+.o2{width:500px;height:500px;background:#00e5c8;bottom:-150px;right:-150px;animation-delay:4s}
+.o3{width:300px;height:300px;background:#ff6b6b;top:50%;left:50%;animation-delay:7s}
+@keyframes pulse{from{transform:scale(1) translate(0,0)}to{transform:scale(1.1) translate(20px,15px)}}
+.wrap{position:relative;z-index:1;width:100%;max-width:420px;padding:20px}
+.logo{text-align:center;margin-bottom:32px}
+.logo-icon{display:inline-flex;align-items:center;justify-content:center;width:60px;height:60px;border-radius:18px;background:linear-gradient(135deg,var(--acc),var(--teal));font-size:28px;margin-bottom:14px;box-shadow:0 8px 32px rgba(108,99,255,.4)}
+.logo h1{font-family:'Syne',sans-serif;font-size:30px;font-weight:800;letter-spacing:-1px}
+.logo h1 span{background:linear-gradient(135deg,var(--acc),var(--teal));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.logo p{color:var(--mut);font-size:13px;margin-top:4px}
+.card{background:rgba(15,15,30,.8);border:1px solid rgba(255,255,255,.07);border-radius:22px;padding:32px;backdrop-filter:blur(20px)}
+.tabs{display:flex;gap:4px;background:var(--s2);border-radius:12px;padding:4px;margin-bottom:28px}
+.tab{flex:1;padding:10px;border:none;background:transparent;color:var(--mut);font-family:'Inter',sans-serif;font-size:14px;font-weight:500;cursor:pointer;border-radius:8px;transition:.2s}
+.tab.active{background:var(--acc);color:#fff}
+.pane{display:none}.pane.active{display:block}
+.f{margin-bottom:16px}
+.f label{display:block;font-size:11px;font-weight:600;color:var(--mut);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px}
+.f input{width:100%;padding:12px 14px;background:var(--s2);border:1px solid rgba(255,255,255,.07);border-radius:10px;color:var(--text);font-size:15px;outline:none;transition:.2s;font-family:'Inter',sans-serif}
+.f input:focus{border-color:var(--acc);box-shadow:0 0 0 3px rgba(108,99,255,.15)}
+.f input::placeholder{color:var(--mut)}
+.r2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.btn-main{width:100%;padding:14px;background:linear-gradient(135deg,var(--acc),#8b7cf8);border:none;border-radius:12px;color:#fff;font-family:'Syne',sans-serif;font-weight:700;font-size:15px;cursor:pointer;transition:.15s;margin-top:6px;letter-spacing:.3px}
+.btn-main:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(108,99,255,.45)}
+.btn-main:disabled{opacity:.6;cursor:not-allowed;transform:none}
+.err{background:rgba(255,107,107,.1);border:1px solid rgba(255,107,107,.3);border-radius:8px;padding:10px 14px;color:var(--red);font-size:13px;margin-bottom:14px;display:none}
+.err.show{display:block}
+.hint{text-align:center;font-size:12px;color:var(--mut);margin-top:14px}
+.hint code{color:var(--teal);background:rgba(0,229,200,.08);padding:2px 6px;border-radius:4px}
+.spin{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:sp .7s linear infinite;vertical-align:middle;margin-right:6px}
+@keyframes sp{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+<div class="bg"><div class="orb o1"></div><div class="orb o2"></div><div class="orb o3"></div></div>
+<div class="wrap">
+  <div class="logo">
+    <div class="logo-icon">🏦</div>
+    <h1>Nexa<span>Bank</span> Pro</h1>
+  </div>
+  <div class="card">
+    <div class="tabs">
+      <button class="tab active" onclick="sw('login')">Sign In</button>
+      <button class="tab" onclick="sw('reg')">Register</button>
+    </div>
+    <div id="login-pane" class="pane active">
+      <div class="err" id="le"></div>
+      <div class="f"><label>Username</label><input id="lu" placeholder="your username" autocomplete="username"></div>
+      <div class="f"><label>Password</label><input type="password" id="lp" placeholder="••••••••" autocomplete="current-password"></div>
+      <button class="btn-main" id="lb" onclick="doLogin()">Sign In</button>
+      <div class="hint">Demo: <code>demo</code> / <code>Demo@1234</code></div>
+    </div>
+    <div id="reg-pane" class="pane">
+      <div class="err" id="re"></div>
+      <div class="r2">
+        <div class="f"><label>First Name</label><input id="rn1" placeholder="Alex"></div>
+        <div class="f"><label>Last Name</label><input id="rn2" placeholder="Johnson"></div>
+      </div>
+      <div class="f"><label>Username</label><input id="ru" placeholder="alexj"></div>
+      <div class="f"><label>Email</label><input type="email" id="rm" placeholder="alex@email.com"></div>
+      <div class="f"><label>Phone</label><input id="rph" placeholder="9876543210"></div>
+      <div class="f"><label>Password <small style="color:var(--mut)">(8+ chars, upper, lower, digit, symbol)</small></label><input type="password" id="rp" placeholder="Min 8 characters"></div>
+      <button class="btn-main" id="rb" onclick="doReg()">Create Account</button>
+    </div>
+  </div>
+</div>
+<script>
+const API='http://localhost:8080/api';
+if(localStorage.getItem('token')) location.href='/dashboard.html';
+function sw(t){
+  document.querySelectorAll('.tab').forEach((b,i)=>b.classList.toggle('active',(i===0&&t==='login')||(i===1&&t==='reg')));
+  document.getElementById('login-pane').classList.toggle('active',t==='login');
+  document.getElementById('reg-pane').classList.toggle('active',t==='reg');
+}
+async function doLogin(){
+  const btn = document.getElementById('lb');
+  const err = document.getElementById('le');
+
+  const u = document.getElementById('lu').value.trim();
+  const p = document.getElementById('lp').value;
+
+  if(!u || !p){
+    showErr(err,'Fill all fields');
+    return;
+  }
+
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spin"></span> Signing in...';
+
+  try{
+    const r = await fetch(API + '/login', {
+      method:'POST',
+      headers:{ 'Content-Type':'application/json' },
+      body: JSON.stringify({ username:u, password:p })
+    });
+
+    const d = await r.json();
+
+    if(!r.ok){
+      throw new Error(d.error || d.message || 'Login failed');
+    }
+
+    // ✅ IMPORTANT FIX (store correct key)
+    localStorage.setItem('token', d.token);
+
+    // optional user info
+    localStorage.setItem('user', JSON.stringify({
+      userId: d.userId,
+      username: d.username
+    }));
+
+    // ✅ redirect
+    location.href = '/dashboard.html';
+
+  }catch(e){
+    showErr(err, e.message);
+    btn.disabled = false;
+    btn.textContent = 'Sign In';
+  }
+}
+async function doReg(){
+  const btn=document.getElementById('rb'),err=document.getElementById('re');
+  const fn=document.getElementById('rn1').value.trim(),ln=document.getElementById('rn2').value.trim();
+  const u=document.getElementById('ru').value.trim(),m=document.getElementById('rm').value.trim();
+  const ph=document.getElementById('rph').value.trim(),p=document.getElementById('rp').value;
+  if(!fn||!ln||!u||!m||!p){showErr(err,'Fill all fields');return;}
+  btn.disabled=true;btn.innerHTML='<span class="spin"></span>Creating...';
+  try{
+    const r=await fetch(API+'/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:u,password:p,fullName:fn+' '+ln,email:m,phone:ph})});
+    const d=await r.json();
+    if(!r.ok)throw new Error(d.error||'Registration failed');
+    showErr(document.getElementById('le'),'Account created! Please login.');
+    document.getElementById('le').style.background='rgba(77,255,163,.1)';
+    document.getElementById('le').style.borderColor='rgba(77,255,163,.3)';
+    document.getElementById('le').style.color='var(--grn)';
+    document.getElementById('le').classList.add('show');
+    sw('login');
+  }catch(e){showErr(err,e.message);btn.disabled=false;btn.textContent='Create Account';}
+}
+function showErr(el,msg){el.textContent=msg;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),5000);}
+document.addEventListener('keydown',e=>{if(e.key==='Enter'){if(document.getElementById('login-pane').classList.contains('active'))doLogin();else doReg();}});
+</script>
+</body>
+</html>
